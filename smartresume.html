@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartResume Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black; /* Black background */
+            color: white; /* White text for contrast */
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px; /* Increased width */
+            margin: 20px;
+            padding: 20px;
+            background: #333; /* Dark gray container */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* White shadow for contrast */
+            border-radius: 10px;
+        }
+
+        h1 {
+            color: #fff; /* White heading */
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #fff; /* White labels */
+        }
+
+        input, textarea, .file-upload {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #555; /* Darker border */
+            border-radius: 5px;
+            background: #444; /* Dark input background */
+            color: white; /* White text */
+        }
+
+        .file-upload {
+            background: #555; /* Slightly lighter background for file upload */
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .resume-section, .auth-section {
+            display: none; /* Hidden by default */
+            margin-top: 30px;
+        }
+
+        .resume-section.active, .auth-section.active {
+            display: block; /* Show when active */
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .uploaded-files {
+            margin-top: 20px;
+        }
+
+        .uploaded-files a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .uploaded-files a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login/Register Section -->
+        <div id="auth-section" class="auth-section active">
+            <h1>Welcome to SmartResume Generator</h1>
+            <div id="login-form">
+                <h2>Login</h2>
+                <form id="login">
+                    <label for="login-email">Email:</label>
+                    <input type="email" id="login-email" required>
+
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" required>
+
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <p>Don't have an account? <a href="#" id="show-register">Register here</a>.</p>
+                <div id="login-error" class="error"></div>
+            </div>
+
+            <div id="register-form" style="display: none;">
+                <h2>Register</h2>
+                <form id="register">
+                    <label for="register-name">Full Name:</label>
+                    <input type="text" id="register-name" required>
+
+                    <label for="register-email">Email:</label>
+                    <input type="email" id="register-email" required>
+
+                    <label for="register-password">Password:</label>
+                    <input type="password" id="register-password" required>
+
+                    <button type="submit" class="btn">Register</button>
+                </form>
+                <p>Already have an account? <a href="#" id="show-login">Login here</a>.</p>
+                <div id="register-error" class="error"></div>
+            </div>
+        </div>
+
+        <!-- Input Form Section -->
+        <div id="input-form" class="resume-section">
+            <h1>Create Your Resume</h1>
+            <form id="resume-form">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" required>
+
+                <label for="ssc">SSC Details (School, Year, Percentage):</label>
+                <textarea id="ssc" rows="4" required></textarea>
+
+                <label for="inter">Intermediate Details (College, Year, Percentage):</label>
+                <textarea id="inter" rows="4" required></textarea>
+
+                <label for="degree">Present Degree (Course, College, Year, CGPA/Percentage):</label>
+                <textarea id="degree" rows="4" required></textarea>
+
+                <label for="hobbies">Hobbies:</label>
+                <textarea id="hobbies" rows="4" required></textarea>
+
+                <label for="role">Role of Your Job:</label>
+                <input type="text" id="role" required>
+
+                <label for="projects">Number of Projects Done:</label>
+                <input type="number" id="projects" required>
+
+                <label for="project-files">Upload Project Files (PDF, Images, etc.):</label>
+                <input type="file" id="project-files" class="file-upload" multiple>
+
+                <label for="father-name">Father's Name:</label>
+                <input type="text" id="father-name" required>
+
+                <label for="mother-name">Mother's Name:</label>
+                <input type="text" id="mother-name" required>
+
+                <label for="parents-contact">Parents' Contact:</label>
+                <input type="tel" id="parents-contact" required>
+
+                <label for="education">Education (Additional Details):</label>
+                <textarea id="education" rows="4"></textarea>
+
+                <label for="experience">Work Experience:</label>
+                <textarea id="experience" rows="4" required></textarea>
+
+                <label for="skills">Skills:</label>
+                <textarea id="skills" rows="4" required></textarea>
+
+                <label for="career-goal">Career Goal:</label>
+                <textarea id="career-goal" rows="4" required></textarea>
+
+                <button type="submit" class="btn">Generate Resume</button>
+                <button type="button" class="btn" id="save-resume">Save Resume</button>
+            </form>
+        </div>
+
+        <!-- Resume Display Section -->
+        <div id="resume-section" class="resume-section">
+            <h1>Your Smart Resume</h1>
+            <div id="resume-content">
+                <!-- Resume content will be dynamically inserted here -->
+            </div>
+            <div class="uploaded-files" id="uploaded-files">
+                <!-- Uploaded files will be displayed here -->
+            </div>
+            <button type="button" class="btn" id="edit-resume">Edit Resume</button>
+            <button type="button" class="btn" id="download-resume">Download Resume</button>
+        </div>
+    </div>
+
+    <script>
+        // User data storage (using localStorage)
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Store uploaded files
+        let uploadedFiles = [];
+
+        // Show/hide login and register forms
+        document.getElementById('show-register').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        });
+
+        document.getElementById('show-login').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        });
+
+        // Register functionality
+        document.getElementById('register').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            // Check if user already exists
+            const userExists = users.some(user => user.email === email);
+            if (userExists) {
+                document.getElementById('register-error').innerText = 'User already exists!';
+                return;
+            }
+
+            // Add new user
+            users.push({ name, email, password });
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Registration successful! Please login.');
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        });
+
+        // Login functionality
+        document.getElementById('login').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // Find user
+            const user = users.find(user => user.email === email && user.password === password);
+            if (!user) {
+                document.getElementById('login-error').innerText = 'Invalid email or password!';
+                return;
+            }
+
+            // Hide auth section and show resume form
+            document.getElementById('auth-section').classList.remove('active');
+            document.getElementById('input-form').classList.add('active');
+
+            // Load saved resume data if it exists
+            const savedResume = JSON.parse(localStorage.getItem(`resume_${email}`));
+            if (savedResume) {
+                document.getElementById('name').value = savedResume.name;
+                document.getElementById('email').value = savedResume.email;
+                document.getElementById('phone').value = savedResume.phone;
+                document.getElementById('ssc').value = savedResume.ssc;
+                document.getElementById('inter').value = savedResume.inter;
+                document.getElementById('degree').value = savedResume.degree;
+                document.getElementById('hobbies').value = savedResume.hobbies;
+                document.getElementById('role').value = savedResume.role;
+                document.getElementById('projects').value = savedResume.projects;
+                document.getElementById('father-name').value = savedResume.fatherName;
+                document.getElementById('mother-name').value = savedResume.motherName;
+                document.getElementById('parents-contact').value = savedResume.parentsContact;
+                document.getElementById('education').value = savedResume.education;
+                document.getElementById('experience').value = savedResume.experience;
+                document.getElementById('skills').value = savedResume.skills;
+                document.getElementById('career-goal').value = savedResume.careerGoal;
+            }
+        });
+
+        // File upload functionality
+        document.getElementById('project-files').addEventListener('change', function (e) {
+            const files = e.target.files;
+            uploadedFiles = Array.from(files); // Store uploaded files
+        });
+
+        // Resume generation functionality
+        document.getElementById('resume-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Get user inputs
+            const resumeData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                ssc: document.getElementById('ssc').value,
+                inter: document.getElementById('inter').value,
+                degree: document.getElementById('degree').value,
+                hobbies: document.getElementById('hobbies').value,
+                role: document.getElementById('role').value,
+                projects: document.getElementById('projects').value,
+                fatherName: document.getElementById('father-name').value,
+                motherName: document.getElementById('mother-name').value,
+                parentsContact: document.getElementById('parents-contact').value,
+                education: document.getElementById('education').value,
+                experience: document.getElementById('experience').value,
+                skills: document.getElementById('skills').value,
+                careerGoal: document.getElementById('career-goal').value,
+            };
+
+            // Generate resume content
+            const resumeContent = `
+                <h2>${resumeData.name}</h2>
+                <p>Email: ${resumeData.email} | Phone: ${resumeData.phone}</p>
+
+                <h2>Education</h2>
+                <h3>SSC Details</h3>
+                <p>${resumeData.ssc}</p>
+
+                <h3>Intermediate Details</h3>
+                <p>${resumeData.inter}</p>
+
+                <h3>Present Degree</h3>
+                <p>${resumeData.degree}</p>
+
+                <h2>Hobbies</h2>
+                <p>${resumeData.hobbies}</p>
+
+                <h2>Role of Your Job</h2>
+                <p>${resumeData.role}</p>
+
+                <h2>Number of Projects Done</h2>
+                <p>${resumeData.projects}</p>
+
+                <h2>Parents' Details</h2>
+                <p>Father's Name: ${resumeData.fatherName}</p>
+                <p>Mother's Name: ${resumeData.motherName}</p>
+                <p>Parents' Contact: ${resumeData.parentsContact}</p>
+
+                <h2>Work Experience</h2>
+                <p>${resumeData.experience}</p>
+
+                <h2>Skills</h2>
+                <p>${resumeData.skills}</p>
+
+                <h2>Career Goal</h2>
+                <p>${resumeData.careerGoal}</p>
+            `;
+
+            // Insert resume content into the page
+            document.getElementById('resume-content').innerHTML = resumeContent;
+
+            // Display uploaded files
+            const uploadedFilesSection = document.getElementById('uploaded-files');
+            uploadedFilesSection.innerHTML = '<h2>Uploaded Project Files</h2>';
+            if (uploadedFiles.length > 0) {
+                uploadedFiles.forEach((file, index) => {
+                    const fileLink = document.createElement('a');
+                    fileLink.href = URL.createObjectURL(file);
+                    fileLink.download = file.name;
+                    fileLink.textContent = file.name;
+                    fileLink.style.display = 'block';
+                    uploadedFilesSection.appendChild(fileLink);
+                });
+            } else {
+                uploadedFilesSection.innerHTML += '<p>No files uploaded.</p>';
+            }
+
+            // Hide the input form and show the resume section
+            document.getElementById('input-form').classList.remove('active');
+            document.getElementById('resume-section').classList.add('active');
+        });
+
+        // Save resume functionality
+        document.getElementById('save-resume').addEventListener('click', function () {
+            const email = document.getElementById('email').value;
+
+            if (!email) {
+                alert('Please log in to save your resume.');
+                return;
+            }
+
+            const resumeData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                ssc: document.getElementById('ssc').value,
+                inter: document.getElementById('inter').value,
+                degree: document.getElementById('degree').value,
+                hobbies: document.getElementById('hobbies').value,
+                role: document.getElementById('role').value,
+                projects: document.getElementById('projects').value,
+                fatherName: document.getElementById('father-name').value,
+                motherName: document.getElementById('mother-name').value,
+                parentsContact: document.getElementById('parents-contact').value,
+                education: document.getElementById('education').value,
+                experience: document.getElementById('experience').value,
+                skills: document.getElementById('skills').value,
+                careerGoal: document.getElementById('career-goal').value,
+            };
+
+            // Save resume data to localStorage
+            localStorage.setItem(`resume_${email}`, JSON.stringify(resumeData));
+            alert('Resume saved successfully!');
+        });
+
+        // Edit resume functionality
+        document.getElementById('edit-resume').addEventListener('click', function () {
+            document.getElementById('resume-section').classList.remove('active');
+            document.getElementById('input-form').classList.add('active');
+        });
+
+        // Download resume functionality
+        document.getElementById('download-resume').addEventListener('click', function () {
+            const resumeContent = document.getElementById('resume-content').innerText;
+            const blob = new Blob([resumeContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resume.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
